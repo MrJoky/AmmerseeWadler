@@ -1,0 +1,15 @@
+baseURL = "https://example.github.io/rad-am-ring-team/"
+languageCode = "de-de"
+title = "Rad am Ring Team Live"
+enableRobotsTXT = true
+
+[params]
+  description = "Livekarte, Teamzeiten und manuelle Rundenzeiten fuer unser Rad am Ring 24h Rennrad-Team."
+  raceStart = "2026-07-25T12:58:00+02:00"
+  raceHours = 24
+  lapDistanceKm = 19.6
+  racemapEventId = ""
+  firebaseEnabled = true
+
+[markup.goldmark.renderer]
+  unsafe = true

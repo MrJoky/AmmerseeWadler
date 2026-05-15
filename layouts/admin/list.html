@@ -1,0 +1,58 @@
+{{ define "main" }}
+<section class="admin-shell">
+  <div class="admin-intro">
+    <p class="eyebrow">Admin</p>
+    <h1>Teams, Fahrer und Rundenzeiten pflegen</h1>
+    <p>Login per Firebase Auth. Ohne konfigurierte Firebase-App bleibt die Ansicht im lokalen Demo-Modus.</p>
+  </div>
+
+  <div class="auth-bar">
+    <input id="admin-email" type="email" placeholder="E-Mail" autocomplete="email">
+    <input id="admin-password" type="password" placeholder="Passwort" autocomplete="current-password">
+    <button id="login-button" type="button">Einloggen</button>
+    <button id="logout-button" type="button" hidden>Ausloggen</button>
+    <span id="auth-state">Nicht angemeldet</span>
+  </div>
+
+  <section class="admin-grid">
+    <form id="participant-form" class="admin-card">
+      <h2>Fahrer hinzufuegen</h2>
+      <label>Team
+        <select id="participant-team" required></select>
+      </label>
+      <label>Name
+        <input id="participant-name" required maxlength="80">
+      </label>
+      <label>Startnummer / RACEMAP Startnummer
+        <input id="participant-number" maxlength="20">
+      </label>
+      <label class="check-row">
+        <input id="participant-pinned" type="checkbox">
+        Angepinnt anzeigen
+      </label>
+      <button type="submit">Fahrer speichern</button>
+    </form>
+
+    <form id="lap-form" class="admin-card">
+      <h2>Rundenzeit eintragen</h2>
+      <label>Fahrer
+        <select id="lap-rider" required></select>
+      </label>
+      <label>Rundenzeit
+        <input id="lap-time" required placeholder="00:42:30" pattern="^\\d{1,2}:\\d{2}:\\d{2}$">
+      </label>
+      <label>Notiz
+        <input id="lap-note" maxlength="80" placeholder="Stint 2, Nacht, Defekt ...">
+      </label>
+      <button type="submit">Runde speichern</button>
+    </form>
+  </section>
+
+  <section class="admin-card wide">
+    <h2>Teilnehmer verwalten</h2>
+    <div id="admin-roster" class="admin-roster"></div>
+  </section>
+</section>
+
+<script type="module" src="{{ "/js/admin.js" | relURL }}"></script>
+{{ end }}

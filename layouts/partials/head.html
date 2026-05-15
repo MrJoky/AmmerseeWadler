@@ -1,0 +1,34 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ site.Params.description }}">
+  <title>{{ if .Title }}{{ .Title }} | {{ end }}{{ site.Title }}</title>
+  {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+  {{ $raceStart := or (os.Getenv "RAR_RACE_START") site.Params.raceStart }}
+  {{ $raceHours := or (os.Getenv "RAR_RACE_HOURS") site.Params.raceHours }}
+  {{ $lapDistanceKm := or (os.Getenv "RAR_LAP_DISTANCE_KM") site.Params.lapDistanceKm }}
+  {{ $racemapEventId := or (os.Getenv "RAR_RACEMAP_EVENT_ID") site.Params.racemapEventId }}
+  {{ $racemapProxyUrl := os.Getenv "RAR_RACEMAP_PROXY_URL" }}
+  <script>
+    window.RAR_CONFIG = {
+      raceStart: {{ $raceStart | jsonify }},
+      raceHours: {{ $raceHours | jsonify }},
+      lapDistanceKm: {{ $lapDistanceKm | jsonify }},
+      racemapEventId: {{ $racemapEventId | jsonify }},
+      racemapProxyUrl: {{ $racemapProxyUrl | jsonify }},
+      basePath: "{{ "/" | relURL }}",
+      firebaseEnabled: {{ site.Params.firebaseEnabled }}
+    };
+    window.RAR_ENV = {
+      firebase: {
+        apiKey: {{ os.Getenv "FIREBASE_API_KEY" | jsonify }},
+        authDomain: {{ os.Getenv "FIREBASE_AUTH_DOMAIN" | jsonify }},
+        projectId: {{ os.Getenv "FIREBASE_PROJECT_ID" | jsonify }},
+        storageBucket: {{ os.Getenv "FIREBASE_STORAGE_BUCKET" | jsonify }},
+        messagingSenderId: {{ os.Getenv "FIREBASE_MESSAGING_SENDER_ID" | jsonify }},
+        appId: {{ os.Getenv "FIREBASE_APP_ID" | jsonify }}
+      }
+    };
+  </script>
+</head>

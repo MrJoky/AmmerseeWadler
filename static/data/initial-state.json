@@ -1,0 +1,43 @@
+{
+  "teams": [
+    {
+      "id": "team-red",
+      "name": "Team Karussell",
+      "color": "#d7193f",
+      "progress": 0.08,
+      "laps": 0,
+      "riders": [
+        { "id": "red-1", "name": "Fahrer 1", "startNumber": "101", "pinned": true, "laps": [] },
+        { "id": "red-2", "name": "Fahrer 2", "startNumber": "102", "pinned": false, "laps": [] },
+        { "id": "red-3", "name": "Fahrer 3", "startNumber": "103", "pinned": false, "laps": [] },
+        { "id": "red-4", "name": "Fahrer 4", "startNumber": "104", "pinned": false, "laps": [] }
+      ]
+    },
+    {
+      "id": "team-blue",
+      "name": "Team Fuchsröhre",
+      "color": "#1769aa",
+      "progress": 0.38,
+      "laps": 0,
+      "riders": [
+        { "id": "blue-1", "name": "Fahrer 5", "startNumber": "201", "pinned": true, "laps": [] },
+        { "id": "blue-2", "name": "Fahrer 6", "startNumber": "202", "pinned": false, "laps": [] },
+        { "id": "blue-3", "name": "Fahrer 7", "startNumber": "203", "pinned": false, "laps": [] },
+        { "id": "blue-4", "name": "Fahrer 8", "startNumber": "204", "pinned": false, "laps": [] }
+      ]
+    },
+    {
+      "id": "team-green",
+      "name": "Team Döttinger Höhe",
+      "color": "#138a53",
+      "progress": 0.68,
+      "laps": 0,
+      "riders": [
+        { "id": "green-1", "name": "Fahrer 9", "startNumber": "301", "pinned": true, "laps": [] },
+        { "id": "green-2", "name": "Fahrer 10", "startNumber": "302", "pinned": false, "laps": [] },
+        { "id": "green-3", "name": "Fahrer 11", "startNumber": "303", "pinned": false, "laps": [] },
+        { "id": "green-4", "name": "Fahrer 12", "startNumber": "304", "pinned": false, "laps": [] }
+      ]
+    }
+  ]
+}

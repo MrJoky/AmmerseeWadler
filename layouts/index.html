@@ -1,0 +1,48 @@
+{{ define "main" }}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Nuerburgring · 24h Rennrad</p>
+    <h1>Drei Teams, eine Livekarte, klare Stints.</h1>
+    <p class="hero-copy">Teampositionen, Restzeit, Kilometer und Fahrer-Rundenzeiten fuer das Rad am Ring Wochenende.</p>
+  </div>
+  <div class="race-clock" aria-live="polite">
+    <span>Noch zu fahren</span>
+    <strong id="remaining-time">--:--:--</strong>
+  </div>
+</section>
+
+<section class="dashboard-grid" aria-label="Live Dashboard">
+  <article class="track-panel">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Livekarte</p>
+        <h2>Nuerburgring</h2>
+      </div>
+      <div class="status-pill" id="tracking-status">Demo-Daten</div>
+    </div>
+    {{ partial "track-map.html" . }}
+  </article>
+
+  <aside class="team-panel">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Teams</p>
+        <h2>Stand</h2>
+      </div>
+    </div>
+    <div id="team-cards" class="team-cards"></div>
+  </aside>
+</section>
+
+<section class="lap-section">
+  <div class="panel-head">
+    <div>
+      <p class="eyebrow">Manuelle Zeiten</p>
+      <h2>Runden je Fahrer</h2>
+    </div>
+  </div>
+  <div id="lap-tables" class="lap-tables"></div>
+</section>
+
+<script type="module" src="{{ "/js/app.js" | relURL }}"></script>
+{{ end }}
