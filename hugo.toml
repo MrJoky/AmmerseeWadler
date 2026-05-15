@@ -2,6 +2,7 @@ baseURL = "https://example.github.io/rad-am-ring-team/"
 languageCode = "de-de"
 title = "Rad am Ring Team Live"
 enableRobotsTXT = true
+disableKinds = ["taxonomy", "term"]
 
 [params]
   description = "Livekarte, Teamzeiten und manuelle Rundenzeiten fuer unser Rad am Ring 24h Rennrad-Team."
@@ -13,3 +14,6 @@ enableRobotsTXT = true
 
 [markup.goldmark.renderer]
   unsafe = true
+
+[security.funcs]
+  getenv = ['^HUGO_', '^CI$', '^RAR_', '^FIREBASE_']
