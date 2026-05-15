@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de-de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Livekarte, Teamzeiten und manuelle Rundenzeiten fuer unser Rad am Ring 24h Rennrad-Team.">
+    <title>Rad am Ring Team Live</title>
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <script>
+      window.RAR_CONFIG = {
+        raceStart: "2026-07-25T12:58:00+02:00",
+        raceHours: 24,
+        lapDistanceKm: 19.6,
+        racemapEventId: "",
+        racemapProxyUrl: "",
+        basePath: "./static/",
+        firebaseEnabled: false
+      };
+      window.RAR_ENV = {
+        firebase: {
+          apiKey: "",
+          authDomain: "",
+          projectId: "",
+          storageBucket: "",
+          messagingSenderId: "",
+          appId: ""
+        }
+      };
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Zur Live Ansicht">
+        <span class="brand-mark"></span>
+        <span>Rad am Ring Team Live</span>
+      </a>
+      <nav aria-label="Hauptnavigation">
+        <a href="./">Live</a>
+        <a href="./admin/">Admin</a>
+      </nav>
+    </header>
+    <main id="main">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Nuerburgring · 24h Rennrad</p>
+          <h1>Drei Teams, eine Livekarte, klare Stints.</h1>
+          <p class="hero-copy">Teampositionen, Restzeit, Kilometer und Fahrer-Rundenzeiten fuer das Rad am Ring Wochenende.</p>
+        </div>
+        <div class="race-clock" aria-live="polite">
+          <span>Noch zu fahren</span>
+          <strong id="remaining-time">--:--:--</strong>
+        </div>
+      </section>
+
+      <section class="dashboard-grid" aria-label="Live Dashboard">
+        <article class="track-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Livekarte</p>
+              <h2>Nuerburgring</h2>
+            </div>
+            <div class="status-pill" id="tracking-status">Demo-Daten</div>
+          </div>
+          <div class="track-wrap">
+            <svg class="track-map" viewBox="0 0 1000 640" role="img" aria-labelledby="track-title track-desc">
+              <title id="track-title">Vereinfachte Rad-am-Ring-Strecke</title>
+              <desc id="track-desc">Eine abstrahierte Nuerburgring-Runde mit farbigen Teampositionen.</desc>
+              <path class="track-shadow" d="M214 402 C126 366 128 245 231 203 C309 171 355 225 419 194 C494 157 467 73 557 82 C667 92 705 173 675 242 C650 302 754 322 807 373 C882 444 819 544 707 516 C626 496 605 583 516 555 C447 533 455 455 377 458 C305 461 276 428 214 402 Z"></path>
+              <path id="track-path" class="track-line" pathLength="1000" d="M214 402 C126 366 128 245 231 203 C309 171 355 225 419 194 C494 157 467 73 557 82 C667 92 705 173 675 242 C650 302 754 322 807 373 C882 444 819 544 707 516 C626 496 605 583 516 555 C447 533 455 455 377 458 C305 461 276 428 214 402 Z"></path>
+              <text x="190" y="425" class="track-label">Start/Ziel</text>
+              <text x="532" y="72" class="track-label">Nordschleife</text>
+              <g id="track-markers"></g>
+            </svg>
+          </div>
+        </article>
+
+        <aside class="team-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Teams</p>
+              <h2>Stand</h2>
+            </div>
+          </div>
+          <div id="team-cards" class="team-cards"></div>
+        </aside>
+      </section>
+
+      <section class="lap-section">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">Manuelle Zeiten</p>
+            <h2>Runden je Fahrer</h2>
+          </div>
+        </div>
+        <div id="lap-tables" class="lap-tables"></div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <p>Gebaut fuer Rad am Ring 24h, 24. bis 26. Juli 2026. Live-Daten via RACEMAP optional, Zeiten manuell gepflegt.</p>
+    </footer>
+    <script type="module" src="./static/js/app.js"></script>
+  </body>
+</html>
