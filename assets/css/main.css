@@ -300,7 +300,7 @@ label {
 }
 .roster-row, .team-editor-row {
   display: grid;
-  grid-template-columns: 1fr 160px 140px auto auto;
+  grid-template-columns: minmax(220px, 1fr) fit-content(220px) fit-content(150px) auto auto;
   gap: 10px;
   align-items: center;
   border-bottom: 1px solid var(--line);
@@ -313,6 +313,15 @@ label {
 }
 .roster-row label, .team-editor-row label {
   margin-bottom: 0;
+}
+.roster-row label:nth-of-type(2),
+.roster-row label:nth-of-type(3) {
+  width: fit-content;
+}
+.roster-row label:nth-of-type(2) select,
+.roster-row label:nth-of-type(3) input {
+  width: fit-content;
+  min-width: 0;
 }
 .roster-row button, .team-editor-row button {
   align-self: end;
