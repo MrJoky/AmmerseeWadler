@@ -10,6 +10,8 @@ const roster = document.querySelector("#admin-roster");
 const authState = document.querySelector("#auth-state");
 const loginButton = document.querySelector("#login-button");
 const logoutButton = document.querySelector("#logout-button");
+const emailInput = document.querySelector("#admin-email");
+const passwordInput = document.querySelector("#admin-password");
 
 init();
 
@@ -30,8 +32,8 @@ async function initAuth() {
 
   const { signInWithEmailAndPassword, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js");
   loginButton.addEventListener("click", async () => {
-    const email = document.querySelector("#admin-email").value.trim();
-    const password = document.querySelector("#admin-password").value;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
     if (!email || !password) {
       authState.textContent = "E-Mail und Passwort eingeben.";
       return;
@@ -50,6 +52,9 @@ async function initAuth() {
   onAuthStateChanged(firebase.auth, user => {
     signedIn = Boolean(user);
     authState.textContent = user ? `Angemeldet: ${user.email}` : "Nicht angemeldet";
+    emailInput.hidden = Boolean(user);
+    passwordInput.hidden = Boolean(user);
+    if (user) passwordInput.value = "";
     loginButton.hidden = Boolean(user);
     loginButton.disabled = false;
     logoutButton.hidden = !user;
