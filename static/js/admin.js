@@ -3,7 +3,6 @@ import { loadInitialState, saveState } from "./state.js";
 
 let state;
 let signedIn = false;
-let trackingTimer;
 
 const teamSelect = document.querySelector("#participant-team");
 const riderSelect = document.querySelector("#lap-rider");
@@ -100,22 +99,19 @@ document.querySelector("#lap-form").addEventListener("submit", async event => {
 
 trackingPlayButton.addEventListener("click", () => {
   if (!canEdit()) return;
-  window.clearInterval(trackingTimer);
-  trackingTimer = window.setInterval(async () => {
-    state.teams.forEach((team, index) => {
-      const speed = 0.015 + index * 0.004;
-      team.progress = normalizeProgress(Number(team.progress || 0) + speed);
-    });
-    await persist({ rerender: false, message: "Demo-Tracking laeuft ..." });
-    renderTrackingEditor();
-  }, 2500);
-  authState.textContent = "Demo-Tracking gestartet.";
+  state.demoTracking = {
+    enabled: true,
+    startedAt: new Date().toISOString(),
+    baseProgress: Object.fromEntries(state.teams.map(team => [team.id, normalizeProgress(team.progress || 0)])),
+    speeds: Object.fromEntries(state.teams.map((team, index) => [team.id, 0.0008 + index * 0.00022]))
+  };
+  persist({ message: "Demo-Tracking gestartet." });
 });
 
 trackingStopButton.addEventListener("click", () => {
-  window.clearInterval(trackingTimer);
-  trackingTimer = null;
-  authState.textContent = "Demo-Tracking gestoppt.";
+  state.teams = applyDemoTracking(state).teams;
+  state.demoTracking = { ...(state.demoTracking || {}), enabled: false };
+  persist({ message: "Demo-Tracking gestoppt." });
 });
 
 function renderAdmin() {
@@ -147,6 +143,7 @@ function renderTrackingEditor() {
       event.preventDefault();
       if (!canEdit()) return;
       team.progress = Number(range.value) / 1000;
+      state.demoTracking = { ...(state.demoTracking || {}), enabled: false };
       await persist();
     });
     return row;
@@ -250,6 +247,20 @@ function normalizeProgress(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return 0;
   return ((numeric % 1) + 1) % 1;
+}
+
+function applyDemoTracking(sourceState) {
+  const demo = sourceState.demoTracking;
+  if (!demo?.enabled || !demo.startedAt) return sourceState;
+  const elapsedSeconds = Math.max(0, (Date.now() - new Date(demo.startedAt).getTime()) / 1000);
+  return {
+    ...sourceState,
+    teams: sourceState.teams.map(team => {
+      const base = Number(demo.baseProgress?.[team.id] ?? team.progress ?? 0);
+      const speed = Number(demo.speeds?.[team.id] ?? 0.0008);
+      return { ...team, progress: normalizeProgress(base + elapsedSeconds * speed) };
+    })
+  };
 }
 
 function option(value, label) {
