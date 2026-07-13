@@ -12,22 +12,22 @@
   {{ $racemapProxyUrl := os.Getenv "RAR_RACEMAP_PROXY_URL" }}
   <script>
     window.RAR_CONFIG = {
-      raceStart: {{ $raceStart | jsonify }},
-      raceHours: {{ $raceHours | jsonify }},
-      lapDistanceKm: {{ $lapDistanceKm | jsonify }},
-      racemapEventId: {{ $racemapEventId | jsonify }},
-      racemapProxyUrl: {{ $racemapProxyUrl | jsonify }},
+      raceStart: {{ printf "%q" $raceStart | safeJS }},
+      raceHours: {{ int $raceHours }},
+      lapDistanceKm: {{ float $lapDistanceKm }},
+      racemapEventId: {{ printf "%q" $racemapEventId | safeJS }},
+      racemapProxyUrl: {{ printf "%q" $racemapProxyUrl | safeJS }},
       basePath: "{{ "/" | relURL }}",
       firebaseEnabled: {{ site.Params.firebaseEnabled }}
     };
     window.RAR_ENV = {
       firebase: {
-        apiKey: {{ os.Getenv "FIREBASE_API_KEY" | jsonify }},
-        authDomain: {{ os.Getenv "FIREBASE_AUTH_DOMAIN" | jsonify }},
-        projectId: {{ os.Getenv "FIREBASE_PROJECT_ID" | jsonify }},
-        storageBucket: {{ os.Getenv "FIREBASE_STORAGE_BUCKET" | jsonify }},
-        messagingSenderId: {{ os.Getenv "FIREBASE_MESSAGING_SENDER_ID" | jsonify }},
-        appId: {{ os.Getenv "FIREBASE_APP_ID" | jsonify }}
+        apiKey: {{ printf "%q" (os.Getenv "FIREBASE_API_KEY") | safeJS }},
+        authDomain: {{ printf "%q" (os.Getenv "FIREBASE_AUTH_DOMAIN") | safeJS }},
+        projectId: {{ printf "%q" (os.Getenv "FIREBASE_PROJECT_ID") | safeJS }},
+        storageBucket: {{ printf "%q" (os.Getenv "FIREBASE_STORAGE_BUCKET") | safeJS }},
+        messagingSenderId: {{ printf "%q" (os.Getenv "FIREBASE_MESSAGING_SENDER_ID") | safeJS }},
+        appId: {{ printf "%q" (os.Getenv "FIREBASE_APP_ID") | safeJS }}
       }
     };
   </script>
