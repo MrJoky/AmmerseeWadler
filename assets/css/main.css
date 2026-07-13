@@ -372,12 +372,6 @@ label {
 .roster-row button, .team-editor-row button {
   align-self: end;
 }
-.tracking-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
-}
 .tracking-row {
   display: grid;
   grid-template-columns: 180px minmax(220px, 1fr) 70px auto;

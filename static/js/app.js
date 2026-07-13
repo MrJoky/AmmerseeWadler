@@ -16,10 +16,6 @@ window.setInterval(() => {
   if (currentState) refresh();
 }, 30000);
 
-window.setInterval(() => {
-  if (currentState?.demoTracking?.enabled) refresh();
-}, 1000);
-
 window.setInterval(async () => {
   if (!window.RAR_CONFIG.firebaseEnabled) return;
   currentState = await loadInitialState();
@@ -27,37 +23,14 @@ window.setInterval(async () => {
 }, 5000);
 
 async function refresh() {
-  const animatedState = applyDemoTracking(currentState);
-  const result = await updateFromRacemap(animatedState);
+  const result = await updateFromRacemap(currentState);
   currentState = result.state;
-  document.querySelector("#tracking-status").textContent = currentState.demoTracking?.enabled
-    ? "Demo-Tracking live"
-    : result.source === "Demo-Daten" && window.RAR_CONFIG.firebaseEnabled
+  document.querySelector("#tracking-status").textContent = result.source === "Demo-Daten" && window.RAR_CONFIG.firebaseEnabled
     ? "Firebase live"
     : result.source;
   renderMap(currentState);
   renderTeams(currentState);
   renderLapTables(currentState);
-}
-
-function applyDemoTracking(sourceState) {
-  const demo = sourceState?.demoTracking;
-  if (!demo?.enabled || !demo.startedAt) return sourceState;
-  const elapsedSeconds = Math.max(0, (Date.now() - new Date(demo.startedAt).getTime()) / 1000);
-  return {
-    ...sourceState,
-    teams: sourceState.teams.map(team => {
-      const base = Number(demo.baseProgress?.[team.id] ?? team.progress ?? 0);
-      const speed = Number(demo.speeds?.[team.id] ?? 0.0008);
-      return { ...team, progress: normalizeProgress(base + elapsedSeconds * speed) };
-    })
-  };
-}
-
-function normalizeProgress(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return 0;
-  return ((numeric % 1) + 1) % 1;
 }
 
 function renderTeams(state) {

@@ -14,8 +14,6 @@ const loginButton = document.querySelector("#login-button");
 const logoutButton = document.querySelector("#logout-button");
 const emailInput = document.querySelector("#admin-email");
 const passwordInput = document.querySelector("#admin-password");
-const trackingPlayButton = document.querySelector("#tracking-play");
-const trackingStopButton = document.querySelector("#tracking-stop");
 
 init();
 document.addEventListener("click", event => {
@@ -103,23 +101,6 @@ document.querySelector("#lap-form").addEventListener("submit", async event => {
   await persist();
 });
 
-trackingPlayButton.addEventListener("click", () => {
-  if (!canEdit()) return;
-  state.demoTracking = {
-    enabled: true,
-    startedAt: new Date().toISOString(),
-    baseProgress: Object.fromEntries(state.teams.map(team => [team.id, normalizeProgress(team.progress || 0)])),
-    speeds: Object.fromEntries(state.teams.map((team, index) => [team.id, 0.0008 + index * 0.00022]))
-  };
-  persist({ message: "Demo-Tracking gestartet." });
-});
-
-trackingStopButton.addEventListener("click", () => {
-  state.teams = applyDemoTracking(state).teams;
-  state.demoTracking = { ...(state.demoTracking || {}), enabled: false };
-  persist({ message: "Demo-Tracking gestoppt." });
-});
-
 function renderAdmin() {
   teamSelect.replaceChildren(...state.teams.map(team => option(team.id, team.name)));
   riderSelect.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => option(rider.id, `${team.name}: ${rider.name}`))));
@@ -149,7 +130,6 @@ function renderTrackingEditor() {
       event.preventDefault();
       if (!canEdit()) return;
       team.progress = Number(range.value) / 1000;
-      state.demoTracking = { ...(state.demoTracking || {}), enabled: false };
       await persist();
     });
     return row;
@@ -213,6 +193,7 @@ function rosterRow(team, rider) {
 async function persist(options = {}) {
   const { rerender = true, message = "Gespeichert." } = options;
   try {
+    delete state.demoTracking;
     await saveState(state);
     authState.textContent = message;
     if (rerender) renderAdmin();
@@ -253,20 +234,6 @@ function normalizeProgress(value) {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return 0;
   return ((numeric % 1) + 1) % 1;
-}
-
-function applyDemoTracking(sourceState) {
-  const demo = sourceState.demoTracking;
-  if (!demo?.enabled || !demo.startedAt) return sourceState;
-  const elapsedSeconds = Math.max(0, (Date.now() - new Date(demo.startedAt).getTime()) / 1000);
-  return {
-    ...sourceState,
-    teams: sourceState.teams.map(team => {
-      const base = Number(demo.baseProgress?.[team.id] ?? team.progress ?? 0);
-      const speed = Number(demo.speeds?.[team.id] ?? 0.0008);
-      return { ...team, progress: normalizeProgress(base + elapsedSeconds * speed) };
-    })
-  };
 }
 
 function option(value, label) {
