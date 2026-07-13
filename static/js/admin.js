@@ -18,6 +18,12 @@ const trackingPlayButton = document.querySelector("#tracking-play");
 const trackingStopButton = document.querySelector("#tracking-stop");
 
 init();
+document.addEventListener("click", event => {
+  const button = event.target.closest("button");
+  if (!button || button.disabled) return;
+  button.classList.add("is-pressed");
+  window.setTimeout(() => button.classList.remove("is-pressed"), 220);
+});
 
 async function init() {
   state = await loadInitialState();
