@@ -1,4 +1,4 @@
-import { watchState } from "./state.js";
+import { loadInitialState, watchState } from "./state.js";
 import { renderMap } from "./map.js";
 import { startRaceClock } from "./timers.js";
 import { updateFromRacemap } from "./tracking.js";
@@ -16,10 +16,18 @@ window.setInterval(() => {
   if (currentState) refresh();
 }, 30000);
 
+window.setInterval(async () => {
+  if (!window.RAR_CONFIG.firebaseEnabled) return;
+  currentState = await loadInitialState();
+  await refresh();
+}, 5000);
+
 async function refresh() {
   const result = await updateFromRacemap(currentState);
   currentState = result.state;
-  document.querySelector("#tracking-status").textContent = result.source;
+  document.querySelector("#tracking-status").textContent = result.source === "Demo-Daten" && window.RAR_CONFIG.firebaseEnabled
+    ? "Firebase live"
+    : result.source;
   renderMap(currentState);
   renderTeams(currentState);
   renderLapTables(currentState);

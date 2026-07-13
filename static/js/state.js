@@ -24,7 +24,7 @@ export async function saveState(state) {
   const firebase = await getFirebase();
   if (firebase?.db) {
     const { doc, setDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
-    await setDoc(doc(firebase.db, ...DOC_PATH), { ...state, updatedAt: serverTimestamp() });
+    await setDoc(doc(firebase.db, ...DOC_PATH), { ...state, updatedAt: serverTimestamp() }, { merge: true });
     return;
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -36,6 +36,7 @@ export async function watchState(onChange) {
     const { doc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js");
     return onSnapshot(doc(firebase.db, ...DOC_PATH), snapshot => {
       if (snapshot.exists()) onChange(snapshot.data());
+      else loadInitialState().then(onChange);
     });
   }
   onChange(await loadInitialState());
