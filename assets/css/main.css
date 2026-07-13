@@ -294,7 +294,7 @@ label {
 .wide {
   margin-top: 18px;
 }
-.admin-roster, .admin-teams {
+.admin-roster, .admin-teams, .tracking-editor {
   display: grid;
   gap: 10px;
 }
@@ -337,6 +337,29 @@ label {
 .roster-row button, .team-editor-row button {
   align-self: end;
 }
+.tracking-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.tracking-row {
+  display: grid;
+  grid-template-columns: 180px minmax(220px, 1fr) 70px auto;
+  gap: 12px;
+  align-items: center;
+  border-left: 8px solid var(--team-color);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0 10px 12px;
+}
+.tracking-row input[type="range"] {
+  min-height: auto;
+  padding: 0;
+}
+.tracking-row output {
+  color: var(--muted);
+  font-weight: 900;
+}
 .site-footer {
   color: var(--muted);
   padding: 28px 0 40px;
@@ -354,7 +377,7 @@ label {
   .metrics {
     grid-template-columns: repeat(2, 1fr);
   }
-  .roster-row, .team-editor-row {
+  .roster-row, .team-editor-row, .tracking-row {
     grid-template-columns: 1fr;
   }
 }
