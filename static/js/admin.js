@@ -7,7 +7,6 @@ let signedIn = false;
 const teamSelect = document.querySelector("#participant-team");
 const riderSelect = document.querySelector("#lap-rider");
 const teamEditor = document.querySelector("#admin-teams");
-const trackingEditor = document.querySelector("#tracking-editor");
 const roster = document.querySelector("#admin-roster");
 const authState = document.querySelector("#auth-state");
 const loginButton = document.querySelector("#login-button");
@@ -105,35 +104,7 @@ function renderAdmin() {
   teamSelect.replaceChildren(...state.teams.map(team => option(team.id, team.name)));
   riderSelect.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => option(rider.id, `${team.name}: ${rider.name}`))));
   teamEditor.replaceChildren(...state.teams.map(teamEditorRow));
-  renderTrackingEditor();
   roster.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => rosterRow(team, rider))));
-}
-
-function renderTrackingEditor() {
-  trackingEditor.replaceChildren(...state.teams.map(team => {
-    const row = document.createElement("form");
-    const percent = Math.round(normalizeProgress(team.progress || 0) * 1000) / 10;
-    row.className = "tracking-row";
-    row.style.setProperty("--team-color", team.color);
-    row.innerHTML = `
-      <strong>${escapeHtml(team.name)}</strong>
-      <input name="progress" type="range" min="0" max="1000" value="${Math.round(percent * 10)}">
-      <output>${percent.toFixed(1)}%</output>
-      <button type="submit">Position speichern</button>
-    `;
-    const range = row.querySelector("input");
-    const output = row.querySelector("output");
-    range.addEventListener("input", () => {
-      output.textContent = `${(Number(range.value) / 10).toFixed(1)}%`;
-    });
-    row.addEventListener("submit", async event => {
-      event.preventDefault();
-      if (!canEdit()) return;
-      team.progress = Number(range.value) / 1000;
-      await persist();
-    });
-    return row;
-  }));
 }
 
 function teamEditorRow(team) {
@@ -228,12 +199,6 @@ function moveRider(rider, currentTeamId, nextTeamId) {
   if (!currentTeam || !nextTeam) return;
   currentTeam.riders = currentTeam.riders.filter(item => item.id !== rider.id);
   nextTeam.riders.push(rider);
-}
-
-function normalizeProgress(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return 0;
-  return ((numeric % 1) + 1) % 1;
 }
 
 function option(value, label) {
