@@ -298,16 +298,23 @@ label {
   display: grid;
   gap: 10px;
 }
-.roster-row, .team-editor-row {
+.team-editor-row {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) fit-content(220px) fit-content(150px) auto auto;
+  grid-template-columns: 1fr 120px auto;
   gap: 10px;
   align-items: center;
   border-bottom: 1px solid var(--line);
   padding: 10px 0;
 }
+.roster-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+}
 .team-editor-row {
-  grid-template-columns: 1fr 120px auto;
   border-left: 8px solid var(--team-color);
   padding-left: 12px;
 }
@@ -319,7 +326,7 @@ label {
   width: fit-content;
 }
 .roster-row label:nth-of-type(1) input {
-  width: 50%;
+  width: min(50vw, 270px);
   min-width: 220px;
 }
 .roster-row label:nth-of-type(2) select,
