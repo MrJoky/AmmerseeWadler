@@ -22,22 +22,36 @@ async function init() {
 async function initAuth() {
   const firebase = await getFirebase();
   if (!firebase?.auth) {
-    signedIn = true;
-    authState.textContent = "Lokaler Demo-Modus";
+    signedIn = false;
+    authState.textContent = "Firebase nicht verbunden. Env-Werte pruefen.";
+    loginButton.disabled = true;
     return;
   }
 
   const { signInWithEmailAndPassword, signOut, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js");
   loginButton.addEventListener("click", async () => {
-    const email = document.querySelector("#admin-email").value;
+    const email = document.querySelector("#admin-email").value.trim();
     const password = document.querySelector("#admin-password").value;
-    await signInWithEmailAndPassword(firebase.auth, email, password);
+    if (!email || !password) {
+      authState.textContent = "E-Mail und Passwort eingeben.";
+      return;
+    }
+
+    loginButton.disabled = true;
+    authState.textContent = "Login laeuft ...";
+    try {
+      await signInWithEmailAndPassword(firebase.auth, email, password);
+    } catch (error) {
+      authState.textContent = authErrorMessage(error);
+      loginButton.disabled = false;
+    }
   });
   logoutButton.addEventListener("click", () => signOut(firebase.auth));
   onAuthStateChanged(firebase.auth, user => {
     signedIn = Boolean(user);
     authState.textContent = user ? `Angemeldet: ${user.email}` : "Nicht angemeldet";
     loginButton.hidden = Boolean(user);
+    loginButton.disabled = false;
     logoutButton.hidden = !user;
   });
 }
@@ -126,4 +140,17 @@ function escapeHtml(value) {
     '"': "&quot;",
     "'": "&#039;"
   }[char]));
+}
+
+function authErrorMessage(error) {
+  const code = error?.code || "";
+  const messages = {
+    "auth/invalid-credential": "Login fehlgeschlagen: E-Mail oder Passwort stimmt nicht.",
+    "auth/user-not-found": "Kein Firebase-User mit dieser E-Mail gefunden.",
+    "auth/wrong-password": "Passwort stimmt nicht.",
+    "auth/invalid-email": "E-Mail-Adresse ist ungueltig.",
+    "auth/operation-not-allowed": "E-Mail/Passwort Login ist in Firebase nicht aktiviert.",
+    "auth/too-many-requests": "Zu viele Login-Versuche. Kurz warten und erneut probieren."
+  };
+  return messages[code] || `Login fehlgeschlagen: ${code || error.message}`;
 }

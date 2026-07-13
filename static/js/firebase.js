@@ -3,9 +3,16 @@ let auth;
 let db;
 
 export async function getFirebase() {
-  if (!window.RAR_CONFIG?.firebaseEnabled) return null;
+  if (!window.RAR_CONFIG?.firebaseEnabled) {
+    console.info("Firebase ist deaktiviert.");
+    return null;
+  }
   const config = window.RAR_ENV?.firebase;
-  if (!config?.apiKey || !config?.projectId || !config?.appId) return null;
+  const missing = ["apiKey", "authDomain", "projectId", "appId"].filter(key => !config?.[key]);
+  if (missing.length) {
+    console.warn(`Firebase-Konfiguration unvollstaendig: ${missing.join(", ")}`);
+    return null;
+  }
 
   try {
     const [{ initializeApp }, { getAuth }, { getFirestore }] = await Promise.all([
