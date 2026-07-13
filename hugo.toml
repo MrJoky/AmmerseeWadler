@@ -1,5 +1,5 @@
 baseURL = "https://example.github.io/rad-am-ring-team/"
-languageCode = "de-de"
+locale = "de-DE"
 title = "Rad am Ring Team Live"
 enableRobotsTXT = true
 disableKinds = ["taxonomy", "term"]

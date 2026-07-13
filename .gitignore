@@ -7,3 +7,6 @@ node_modules/
 functions/node_modules/
 .firebase/
 .firebaserc
+.tools/
+.hugo_cache/
+.hugo_build.lock
