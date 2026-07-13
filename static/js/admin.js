@@ -6,6 +6,7 @@ let signedIn = false;
 
 const teamSelect = document.querySelector("#participant-team");
 const riderSelect = document.querySelector("#lap-rider");
+const teamEditor = document.querySelector("#admin-teams");
 const roster = document.querySelector("#admin-roster");
 const authState = document.querySelector("#auth-state");
 const loginButton = document.querySelector("#login-button");
@@ -96,21 +97,59 @@ document.querySelector("#lap-form").addEventListener("submit", async event => {
 function renderAdmin() {
   teamSelect.replaceChildren(...state.teams.map(team => option(team.id, team.name)));
   riderSelect.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => option(rider.id, `${team.name}: ${rider.name}`))));
+  teamEditor.replaceChildren(...state.teams.map(teamEditorRow));
   roster.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => rosterRow(team, rider))));
 }
 
+function teamEditorRow(team) {
+  const row = document.createElement("form");
+  row.className = "team-editor-row";
+  row.style.setProperty("--team-color", team.color);
+  row.innerHTML = `
+    <label>Teamname
+      <input name="name" value="${escapeAttribute(team.name)}" required maxlength="80">
+    </label>
+    <label>Farbe
+      <input name="color" type="color" value="${escapeAttribute(team.color || "#d7193f")}">
+    </label>
+    <button type="submit">Team speichern</button>
+  `;
+  row.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!canEdit()) return;
+    const formData = new FormData(row);
+    team.name = String(formData.get("name")).trim();
+    team.color = String(formData.get("color"));
+    await persist();
+  });
+  return row;
+}
+
 function rosterRow(team, rider) {
-  const row = document.createElement("div");
+  const row = document.createElement("form");
   row.className = "roster-row";
   row.innerHTML = `
-    <strong>${escapeHtml(rider.name)}</strong>
-    <span>${escapeHtml(team.name)}</span>
-    <span>#${escapeHtml(rider.startNumber || "-")}</span>
-    <label class="check-row"><input type="checkbox" ${rider.pinned ? "checked" : ""}> Angepinnt</label>
+    <label>Name
+      <input name="name" value="${escapeAttribute(rider.name)}" required maxlength="80">
+    </label>
+    <label>Team
+      <select name="team">${state.teams.map(item => `<option value="${escapeAttribute(item.id)}" ${item.id === team.id ? "selected" : ""}>${escapeHtml(item.name)}</option>`).join("")}</select>
+    </label>
+    <label>Startnummer
+      <input name="startNumber" value="${escapeAttribute(rider.startNumber || "")}" maxlength="20">
+    </label>
+    <label class="check-row"><input name="pinned" type="checkbox" ${rider.pinned ? "checked" : ""}> Angepinnt</label>
+    <button type="submit">Speichern</button>
   `;
-  row.querySelector("input").addEventListener("change", async event => {
+  row.addEventListener("submit", async event => {
+    event.preventDefault();
     if (!canEdit()) return;
-    rider.pinned = event.target.checked;
+    const formData = new FormData(row);
+    const nextTeamId = String(formData.get("team"));
+    rider.name = String(formData.get("name")).trim();
+    rider.startNumber = String(formData.get("startNumber")).trim();
+    rider.pinned = formData.has("pinned");
+    if (nextTeamId !== team.id) moveRider(rider, team.id, nextTeamId);
     await persist();
   });
   return row;
@@ -146,6 +185,14 @@ function findRider(id) {
   return state.teams.flatMap(team => team.riders).find(rider => rider.id === id);
 }
 
+function moveRider(rider, currentTeamId, nextTeamId) {
+  const currentTeam = state.teams.find(team => team.id === currentTeamId);
+  const nextTeam = state.teams.find(team => team.id === nextTeamId);
+  if (!currentTeam || !nextTeam) return;
+  currentTeam.riders = currentTeam.riders.filter(item => item.id !== rider.id);
+  nextTeam.riders.push(rider);
+}
+
 function option(value, label) {
   const element = document.createElement("option");
   element.value = value;
@@ -161,6 +208,10 @@ function escapeHtml(value) {
     '"': "&quot;",
     "'": "&#039;"
   }[char]));
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value).replace(/`/g, "&#096;");
 }
 
 function authErrorMessage(error) {
