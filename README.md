@@ -40,9 +40,10 @@ winget install Hugo.Hugo.Extended
 1. Firebase-Projekt anlegen.
 2. Authentication mit E-Mail/Passwort aktivieren und Admin-User anlegen.
 3. Firebase Web-App-Werte in `.env` eintragen.
-4. Dem Admin-User ein Custom Claim `admin: true` geben.
-5. Firestore Rules deployen.
-6. Optional fuer RACEMAP:
+4. Admin-User-UID aus Authentication kopieren.
+5. In Firestore manuell `admins/{uid}` anlegen, z.B. mit Feld `role = "admin"`.
+6. Firestore Rules deployen oder in der Firebase Console einfuegen.
+7. Optional fuer RACEMAP:
 
 ```powershell
 firebase functions:secrets:set RACEMAP_API_TOKEN
