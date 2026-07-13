@@ -10,9 +10,7 @@ export async function loadInitialState() {
     const ref = doc(firebase.db, ...DOC_PATH);
     const snapshot = await getDoc(ref);
     if (snapshot.exists()) return snapshot.data();
-    const seed = await fetchSeed();
-    await setDoc(ref, seed);
-    return seed;
+    return fetchSeed();
   }
 
   const stored = localStorage.getItem(STORAGE_KEY);
