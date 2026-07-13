@@ -58,6 +58,7 @@ async function initAuth() {
     loginButton.hidden = Boolean(user);
     loginButton.disabled = false;
     logoutButton.hidden = !user;
+    if (user) seedRaceDocument();
   });
 }
 
@@ -116,8 +117,23 @@ function rosterRow(team, rider) {
 }
 
 async function persist() {
-  await saveState(state);
-  renderAdmin();
+  try {
+    await saveState(state);
+    authState.textContent = "Gespeichert.";
+    renderAdmin();
+  } catch (error) {
+    authState.textContent = writeErrorMessage(error);
+  }
+}
+
+async function seedRaceDocument() {
+  try {
+    authState.textContent = "Firebase wird initialisiert ...";
+    await saveState(state);
+    authState.textContent = "Angemeldet und Firebase verbunden.";
+  } catch (error) {
+    authState.textContent = writeErrorMessage(error);
+  }
 }
 
 function canEdit() {
@@ -158,4 +174,11 @@ function authErrorMessage(error) {
     "auth/too-many-requests": "Zu viele Login-Versuche. Kurz warten und erneut probieren."
   };
   return messages[code] || `Login fehlgeschlagen: ${code || error.message}`;
+}
+
+function writeErrorMessage(error) {
+  if (error?.code === "permission-denied") {
+    return "Keine Schreibrechte. Pruefe admins/{deine UID} in Firestore.";
+  }
+  return `Speichern fehlgeschlagen: ${error?.code || error.message}`;
 }
