@@ -3,6 +3,7 @@ languageCode = "de-DE"
 locale = "de-DE"
 title = "Rad am Ring Team Live"
 enableRobotsTXT = true
+relativeURLs = true
 disableKinds = ["taxonomy", "term"]
 
 [params]
