@@ -10,3 +10,4 @@ functions/node_modules/
 .tools/
 .hugo_cache/
 .hugo_build.lock
+bin/rar-terminal.js
