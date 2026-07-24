@@ -1,12 +1,10 @@
 # Rad am Ring Team Live
 
-Hugo-Website fuer drei 4er-Teams beim Rad am Ring 24h-Rennradrennen. Die Seite laeuft statisch auf GitHub Pages, nutzt Firebase optional fuer Admin-Login und Live-Datenpflege und kann RACEMAP ueber eine Firebase Function anbinden.
+Hugo-Website fuer drei 4er-Teams beim Rad am Ring 24h-Rennradrennen. Die Seite laeuft statisch auf GitHub Pages, nutzt Firebase optional fuer Admin-Login und Live-Datenpflege und bindet den offiziellen RACEMAP Player ein.
 
-## RACEMAP Einschaetzung
+## RACEMAP
 
-Die RACEMAP Data API fuer Live-Geodaten ist tokenpflichtig. Laut Dokumentation muessen API-Requests einen Bearer Token enthalten; ohne gueltiges Token werden Datenabrufe blockiert. Die Rad-am-Ring-Zuschaueransicht ist dagegen ohne Registrierung nutzbar, aber das ist nicht dasselbe wie freier API-Zugriff fuer eigene Anwendungen.
-
-Konsequenz: Den Token nie in GitHub Pages einbauen. Fuer echte Livepositionen `functions/index.js` deployen und den Secret `RACEMAP_API_TOKEN` in Firebase setzen. Bis dahin nutzt die Website Demo-Positionen und manuell gepflegte Zeiten.
+Die Livekarte nutzt den offiziellen RACEMAP Player. Die eigene Website speichert Teams, Fahrer und manuelle Rundenzeiten in Firebase; das GPS-Tracking und Favorisieren von Startnummern passiert direkt im eingebetteten RACEMAP Player.
 
 ## Lokale Entwicklung
 
@@ -43,14 +41,6 @@ winget install Hugo.Hugo.Extended
 4. Admin-User-UID aus Authentication kopieren.
 5. In Firestore manuell `admins/{uid}` anlegen, z.B. mit Feld `role = "admin"`.
 6. Firestore Rules deployen oder in der Firebase Console einfuegen.
-7. Optional fuer RACEMAP:
-
-```powershell
-firebase functions:secrets:set RACEMAP_API_TOKEN
-firebase deploy --only functions,firestore
-```
-
-Die Function-URL danach in `layouts/partials/head.html` als `racemapProxyUrl` setzen oder per Hosting-Rewrite unter einem eigenen Pfad erreichbar machen. Auf GitHub Pages muss es in der Praxis meist die volle Firebase-Function-URL sein.
 
 ## GitHub Actions Secrets
 
@@ -63,9 +53,6 @@ Fuer GitHub Pages die Werte aus `.env.example` als Repository Secrets oder Varia
 - `FIREBASE_MESSAGING_SENDER_ID`
 - `FIREBASE_APP_ID`
 - `RAR_RACEMAP_EVENT_ID`
-- `RAR_RACEMAP_PROXY_URL`
-
-Der echte `RACEMAP_API_TOKEN` gehoert nicht in GitHub Pages. Er bleibt als Firebase Functions Secret.
 
 ## GitHub Pages
 

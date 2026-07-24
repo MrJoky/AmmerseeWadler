@@ -1,7 +1,5 @@
 import { loadInitialState, watchState } from "./state.js";
-import { renderMap } from "./map.js";
 import { startRaceClock } from "./timers.js";
-import { updateFromRacemap } from "./tracking.js";
 
 let currentState;
 
@@ -23,14 +21,36 @@ window.setInterval(async () => {
 }, 5000);
 
 async function refresh() {
-  const result = await updateFromRacemap(currentState);
-  currentState = result.state;
-  document.querySelector("#tracking-status").textContent = result.source === "Demo-Daten" && window.RAR_CONFIG.firebaseEnabled
-    ? "Firebase live"
-    : result.source;
-  renderMap(currentState);
+  document.querySelector("#tracking-status").textContent = window.RAR_CONFIG.firebaseEnabled
+    ? "Firebase + RACEMAP"
+    : "RACEMAP Player";
+  updateRacemapSelection(currentState);
   renderTeams(currentState);
   renderLapTables(currentState);
+}
+
+function updateRacemapSelection(state) {
+  const frame = document.querySelector("#racemap-frame");
+  const note = document.querySelector("#racemap-note");
+  if (!frame) return;
+
+  const baseSrc = frame.dataset.baseSrc || frame.src;
+  const startNumbers = state.teams
+    .flatMap(team => team.riders || [])
+    .filter(rider => rider.pinned && rider.startNumber)
+    .map(rider => rider.startNumber.trim())
+    .filter(Boolean);
+
+  if (!startNumbers.length) {
+    if (frame.src !== baseSrc) frame.src = baseSrc;
+    if (note) note.textContent = "RACEMAP zeigt alle Starter. Im Admin angepinnte Fahrer werden hier automatisch fokussiert.";
+    return;
+  }
+
+  const selectedStartNumber = startNumbers.map(encodeURIComponent).join(",");
+  const nextSrc = `${baseSrc}#selectedStartNumber=${selectedStartNumber}&hideNonSelected=true&selectedFlagContent=STARTNUMBER_AND_NAME&listOpen=true`;
+  if (frame.src !== nextSrc) frame.src = nextSrc;
+  if (note) note.textContent = `RACEMAP fokussiert Startnummern: ${startNumbers.join(", ")}`;
 }
 
 function renderTeams(state) {

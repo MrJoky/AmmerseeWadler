@@ -60,7 +60,6 @@ jobs:
           FIREBASE_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_MESSAGING_SENDER_ID || secrets.FIREBASE_MESSAGING_SENDER_ID }}
           FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID || secrets.FIREBASE_APP_ID }}
           RAR_RACEMAP_EVENT_ID: ${{ vars.RAR_RACEMAP_EVENT_ID }}
-          RAR_RACEMAP_PROXY_URL: ${{ vars.RAR_RACEMAP_PROXY_URL }}
           HUGO_BASEURL: ${{ vars.HUGO_BASEURL }}
         run: |
           missing=()

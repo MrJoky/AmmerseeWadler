@@ -131,37 +131,31 @@ h2 {
   font-size: .85rem;
   font-weight: 800;
 }
-.track-wrap {
+.racemap-player {
   width: 100%;
-  aspect-ratio: 1000 / 640;
+  min-height: 560px;
+  height: min(72vh, 720px);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #edf1ee;
 }
-.track-map {
-  width: 100%;
-  height: 100%;
-}
-.track-shadow {
-  fill: none;
-  stroke: #dfe5dd;
-  stroke-width: 34;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.track-line {
-  fill: none;
-  stroke: #29332f;
-  stroke-width: 12;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.track-label {
-  fill: var(--muted);
-  font-size: 22px;
+.racemap-note {
+  margin: 0;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: #f8faf7;
+  color: var(--muted);
+  font-size: .88rem;
   font-weight: 800;
 }
-.team-marker {
-  stroke: white;
-  stroke-width: 6;
-  filter: drop-shadow(0 5px 8px rgba(0,0,0,.3));
+.racemap-player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 .team-cards {
   display: grid;
@@ -388,6 +382,10 @@ label {
   }
   .metrics {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .racemap-player {
+    min-height: 440px;
+    height: 68vh;
   }
   .roster-row, .team-editor-row {
     grid-template-columns: 1fr;
