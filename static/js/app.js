@@ -32,6 +32,7 @@ async function refresh() {
 function updateRacemapSelection(state) {
   const frame = document.querySelector("#racemap-frame");
   const note = document.querySelector("#racemap-note");
+  const fallback = document.querySelector("#racemap-fallback");
   if (!frame) return;
 
   const baseSrc = normalizeRacemapBaseUrl(frame.dataset.baseSrc || frame.src);
@@ -44,6 +45,7 @@ function updateRacemapSelection(state) {
 
   if (!startNumbers.length) {
     applyRacemapSrc(frame, baseSrc, "all");
+    updateRacemapFallback(fallback, baseSrc);
     if (note) note.textContent = "RACEMAP zeigt alle Starter. Im Admin angepinnte Fahrer werden hier automatisch fokussiert.";
     return;
   }
@@ -63,6 +65,7 @@ function updateRacemapSelection(state) {
 
   const nextSrc = `${baseSrc}#${params.join("&")}`;
   applyRacemapSrc(frame, nextSrc, selectedStartNumber);
+  updateRacemapFallback(fallback, nextSrc);
   if (note) note.textContent = `RACEMAP fokussiert Startnummern: ${racemapStartNumbers.join(", ")} und zeigt weitere Starter als Punkte.`;
 }
 
@@ -84,12 +87,12 @@ function normalizeRacemapBaseUrl(src) {
 function applyRacemapSrc(frame, src, selectionKey) {
   if (frame.dataset.appliedSelection === selectionKey) return;
   frame.dataset.appliedSelection = selectionKey;
-  if (frame.racemapReloadTimer) window.clearTimeout(frame.racemapReloadTimer);
-  frame.src = "about:blank";
-  frame.racemapReloadTimer = window.setTimeout(() => {
-    frame.src = src;
-    frame.racemapReloadTimer = "";
-  }, 0);
+  frame.src = src;
+}
+
+function updateRacemapFallback(link, src) {
+  if (!link) return;
+  link.href = src;
 }
 
 function renderTeams(state) {

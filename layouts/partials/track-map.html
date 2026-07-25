@@ -7,9 +7,12 @@
     title="RACEMAP Liveplayer Rad am Ring 24h Rennrad 2026"
     src="{{ $playerUrl }}"
     data-base-src="{{ $playerUrl }}"
-    loading="lazy"
+    loading="eager"
     referrerpolicy="strict-origin-when-cross-origin"
     allow="geolocation 'src'"
     allowfullscreen>
   </iframe>
+  <a class="racemap-fallback" id="racemap-fallback" href="{{ $playerUrl }}" target="_blank" rel="noopener">
+    RACEMAP direkt öffnen
+  </a>
 </div>
