@@ -63,4 +63,4 @@ Die Action in `.github/workflows/hugo.yml` baut `main` automatisch. In GitHub un
 - Rad am Ring 2026: 24. bis 26. Juli 2026.
 - 24h-Radrennen Start laut Zeitplan: Samstag, 25. Juli 2026, 12:58 Uhr.
 - Zielankunft-Fenster: Sonntag, 26. Juli 2026, 12:15 bis 13:30 Uhr.
-- Vereinfachte Rundenlaenge in der App: 19,6 km.
+- Rundenlaenge in der App: 26,23 km.
