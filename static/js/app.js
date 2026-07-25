@@ -34,7 +34,7 @@ function updateRacemapSelection(state) {
   const note = document.querySelector("#racemap-note");
   if (!frame) return;
 
-  const baseSrc = frame.dataset.baseSrc || frame.src;
+  const baseSrc = normalizeRacemapBaseUrl(frame.dataset.baseSrc || frame.src);
   const startNumbers = state.teams
     .flatMap(team => team.riders || [])
     .filter(rider => rider.pinned && rider.startNumber)
@@ -42,15 +42,32 @@ function updateRacemapSelection(state) {
     .filter(Boolean);
 
   if (!startNumbers.length) {
-    if (frame.src !== baseSrc) frame.src = baseSrc;
+    applyRacemapSrc(frame, baseSrc, "all");
     if (note) note.textContent = "RACEMAP zeigt alle Starter. Im Admin angepinnte Fahrer werden hier automatisch fokussiert.";
     return;
   }
 
-  const selectedStartNumber = startNumbers.map(encodeURIComponent).join(",");
+  const selectedStartNumber = startNumbers.map(number => encodeURIComponent(number)).join(",");
   const nextSrc = `${baseSrc}#selectedStartNumber=${selectedStartNumber}&hideNonSelected=true&selectedFlagContent=STARTNUMBER_AND_NAME&listOpen=true`;
-  if (frame.src !== nextSrc) frame.src = nextSrc;
+  applyRacemapSrc(frame, nextSrc, selectedStartNumber);
   if (note) note.textContent = `RACEMAP fokussiert Startnummern: ${startNumbers.join(", ")}`;
+}
+
+function normalizeRacemapBaseUrl(src) {
+  const url = new URL(src, window.location.href);
+  url.hash = "";
+  return url.href;
+}
+
+function applyRacemapSrc(frame, src, selectionKey) {
+  if (frame.dataset.appliedSelection === selectionKey) return;
+  frame.dataset.appliedSelection = selectionKey;
+  if (frame.racemapReloadTimer) window.clearTimeout(frame.racemapReloadTimer);
+  frame.src = "about:blank";
+  frame.racemapReloadTimer = window.setTimeout(() => {
+    frame.src = src;
+    frame.racemapReloadTimer = "";
+  }, 0);
 }
 
 function renderTeams(state) {
