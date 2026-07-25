@@ -35,11 +35,12 @@ function updateRacemapSelection(state) {
   if (!frame) return;
 
   const baseSrc = normalizeRacemapBaseUrl(frame.dataset.baseSrc || frame.src);
-  const startNumbers = state.teams
+  const startNumbers = [...new Set(state.teams
     .flatMap(team => team.riders || [])
     .filter(rider => rider.pinned && rider.startNumber)
     .map(rider => rider.startNumber.trim())
-    .filter(Boolean);
+    .filter(Boolean))];
+  const racemapStartNumbers = startNumbers.flatMap(startNumberAliases);
 
   if (!startNumbers.length) {
     applyRacemapSrc(frame, baseSrc, "all");
@@ -47,10 +48,31 @@ function updateRacemapSelection(state) {
     return;
   }
 
-  const selectedStartNumber = startNumbers.map(number => encodeURIComponent(number)).join(",");
-  const nextSrc = `${baseSrc}#selectedStartNumber=${selectedStartNumber}&hideNonSelected=true&selectedFlagContent=STARTNUMBER_AND_NAME&listOpen=true`;
+  const selectedStartNumber = racemapStartNumbers.map(number => encodeURIComponent(number)).join(",");
+  const params = [
+    `selectedStartNumber=${selectedStartNumber}`,
+    "selectedFlagContent=STARTNUMBER_AND_NAME",
+    "listOpen=true"
+  ];
+
+  if (window.RAR_CONFIG.racemapHideNonSelected) {
+    params.push("hideNonSelected=true");
+  } else {
+    params.push("showAllFlags=false");
+  }
+
+  const nextSrc = `${baseSrc}#${params.join("&")}`;
   applyRacemapSrc(frame, nextSrc, selectedStartNumber);
-  if (note) note.textContent = `RACEMAP fokussiert Startnummern: ${startNumbers.join(", ")}`;
+  if (note) note.textContent = `RACEMAP fokussiert Startnummern: ${racemapStartNumbers.join(", ")} und zeigt weitere Starter als Punkte.`;
+}
+
+function startNumberAliases(value) {
+  const normalized = String(value).trim();
+  const aliases = [normalized];
+  if (/^\d{5}$/.test(normalized)) {
+    aliases.push(`${normalized.slice(0, 4)}-${normalized.slice(4)}`);
+  }
+  return [...new Set(aliases)];
 }
 
 function normalizeRacemapBaseUrl(src) {
