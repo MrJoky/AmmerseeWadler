@@ -8,6 +8,7 @@ const teamSelect = document.querySelector("#participant-team");
 const riderSelect = document.querySelector("#lap-rider");
 const teamEditor = document.querySelector("#admin-teams");
 const roster = document.querySelector("#admin-roster");
+const lapLog = document.querySelector("#admin-laps");
 const authState = document.querySelector("#auth-state");
 const loginButton = document.querySelector("#login-button");
 const logoutButton = document.querySelector("#logout-button");
@@ -103,8 +104,9 @@ document.querySelector("#lap-form").addEventListener("submit", async event => {
 function renderAdmin() {
   teamSelect.replaceChildren(...state.teams.map(team => option(team.id, team.name)));
   riderSelect.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => option(rider.id, `${team.name}: ${rider.name}`))));
-  teamEditor.replaceChildren(...state.teams.map(teamEditorRow));
-  roster.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => rosterRow(team, rider))));
+  if (teamEditor) teamEditor.replaceChildren(...state.teams.map(teamEditorRow));
+  if (roster) roster.replaceChildren(...state.teams.flatMap(team => team.riders.map(rider => rosterRow(team, rider))));
+  if (lapLog) renderLapLog();
 }
 
 function teamEditorRow(team) {
@@ -157,6 +159,49 @@ function rosterRow(team, rider) {
     rider.pinned = formData.has("pinned");
     if (nextTeamId !== team.id) moveRider(rider, team.id, nextTeamId);
     await persist();
+  });
+  return row;
+}
+
+function renderLapLog() {
+  const rows = state.teams.flatMap(team => team.riders.flatMap(rider => (rider.laps || []).map((lap, lapIndex) => ({
+    team,
+    rider,
+    lap,
+    lapIndex
+  }))));
+
+  if (!rows.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "Noch keine Rundenzeiten eingetragen.";
+    lapLog.replaceChildren(empty);
+    return;
+  }
+
+  lapLog.replaceChildren(...rows.map(lapLogRow));
+}
+
+function lapLogRow({ team, rider, lap, lapIndex }) {
+  const row = document.createElement("div");
+  row.className = "lap-log-row";
+  row.style.setProperty("--team-color", team.color);
+  row.innerHTML = `
+    <div>
+      <strong>${escapeHtml(rider.name)}</strong>
+      <span>${escapeHtml(team.name)}</span>
+    </div>
+    <div>
+      <strong>Runde ${lapIndex + 1}</strong>
+      <span>${escapeHtml(lap.time)}${lap.note ? ` · ${escapeHtml(lap.note)}` : ""}</span>
+    </div>
+    <button type="button">Loeschen</button>
+  `;
+  row.querySelector("button").addEventListener("click", async () => {
+    if (!canEdit()) return;
+    if (!window.confirm(`Runde ${lapIndex + 1} von ${rider.name} wirklich loeschen?`)) return;
+    rider.laps.splice(lapIndex, 1);
+    await persist({ message: "Runde geloescht." });
   });
   return row;
 }

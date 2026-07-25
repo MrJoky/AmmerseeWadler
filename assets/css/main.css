@@ -338,7 +338,7 @@ label {
 .wide {
   margin-top: 18px;
 }
-.admin-roster, .admin-teams {
+.admin-roster, .admin-teams, .admin-laps {
   display: grid;
   gap: 10px;
 }
@@ -381,6 +381,25 @@ label {
 .roster-row button, .team-editor-row button {
   align-self: end;
 }
+.lap-log-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  border-left: 8px solid var(--team-color);
+  padding: 10px 0 10px 12px;
+}
+.lap-log-row div {
+  display: grid;
+  gap: 3px;
+}
+.lap-log-row span, .empty-state {
+  color: var(--muted);
+}
+.lap-log-row button {
+  background: #8f1d2f;
+}
 .site-footer {
   color: var(--muted);
   padding: 28px 0 40px;
@@ -402,7 +421,7 @@ label {
     min-height: 440px;
     height: 68vh;
   }
-  .roster-row, .team-editor-row {
+  .roster-row, .team-editor-row, .lap-log-row {
     grid-template-columns: 1fr;
   }
 }
