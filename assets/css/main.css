@@ -55,6 +55,35 @@ nav {
 }
 nav a { text-decoration: none; }
 
+.visit-alert {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(24, 32, 29, .52);
+}
+.visit-alert.is-hidden {
+  display: none;
+}
+.visit-alert-panel {
+  width: min(100%, 520px);
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 22px 60px rgba(24, 32, 29, .24);
+}
+.visit-alert-panel h2 {
+  margin-bottom: 10px;
+  font-size: clamp(1.55rem, 4vw, 2.1rem);
+}
+.visit-alert-panel p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
 .hero {
   min-height: 280px;
   display: grid;

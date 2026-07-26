@@ -2,10 +2,44 @@
 <html lang="{{ site.Language.LanguageCode | default site.Language.Lang }}">
   {{ partial "head.html" . }}
   <body>
+    <div class="visit-alert" id="visit-alert" role="dialog" aria-modal="true" aria-labelledby="visit-alert-title" aria-describedby="visit-alert-copy">
+      <div class="visit-alert-panel">
+        <p class="eyebrow">Hinweis</p>
+        <h2 id="visit-alert-title">Aktualisierung verzögert</h2>
+        <p id="visit-alert-copy">Der Entwickler hat es wegen Stint-Wechseln und Übermüdung nicht mehr geschafft, die Seiten zu aktualisieren.</p>
+        <button type="button" id="visit-alert-close">Verstanden</button>
+      </div>
+    </div>
     {{ partial "header.html" . }}
     <main id="main">
       {{ block "main" . }}{{ end }}
     </main>
     {{ partial "footer.html" . }}
+    <script>
+      (() => {
+        const alert = document.getElementById("visit-alert");
+        const close = document.getElementById("visit-alert-close");
+        if (!alert || !close) return;
+
+        const storageKey = "ammerseewadler-update-alert-seen";
+        if (localStorage.getItem(storageKey) === "true") {
+          alert.classList.add("is-hidden");
+          return;
+        }
+
+        const dismiss = () => {
+          localStorage.setItem(storageKey, "true");
+          alert.classList.add("is-hidden");
+          document.removeEventListener("keydown", onKeydown);
+        };
+        const onKeydown = (event) => {
+          if (event.key === "Escape") dismiss();
+        };
+
+        close.addEventListener("click", dismiss);
+        document.addEventListener("keydown", onKeydown);
+        close.focus();
+      })();
+    </script>
   </body>
 </html>
